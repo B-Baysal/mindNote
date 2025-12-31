@@ -1,0 +1,85 @@
+### Maven Build ###
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.jar
+*.war
+*.ear
+*.class
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse/STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Log Files ###
+logs/
+*.log
+*.log.*
+*.gz
+
+### Environment & Sensitive Config ###
+.env
+.env.local
+.env.*.local
+application-local.properties
+application-dev.properties
+application-prod.properties
+**/application-*.properties
+!**/application.properties.example
+
+### OS Files ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+### Temporary Files ###
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.#*
+
+### Security & Credentials ###
+secrets/
+credentials/
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+
+### Documentation (optional - uncomment if needed) ###
+# HELP.md

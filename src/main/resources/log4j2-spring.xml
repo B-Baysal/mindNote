@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="APP_NAME">mindnote</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender - Standard Pattern Layout -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- Rolling File Appender - Application Logs -->
+        <RollingFile name="RollingFile"
+                     fileName="${LOG_DIR}/${APP_NAME}.log"
+                     filePattern="${LOG_DIR}/${APP_NAME}-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <!-- Roll over daily -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- Roll over when file reaches 10MB -->
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <!-- Keep max 30 archived files -->
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_DIR}" maxDepth="1">
+                    <IfFileName glob="${APP_NAME}-*.log.gz"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- Rolling File Appender - Error Logs Only -->
+        <RollingFile name="ErrorFile"
+                     fileName="${LOG_DIR}/${APP_NAME}-error.log"
+                     filePattern="${LOG_DIR}/${APP_NAME}-error-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Filters>
+                <!-- Only accept ERROR and FATAL levels -->
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_DIR}" maxDepth="1">
+                    <IfFileName glob="${APP_NAME}-error-*.log.gz"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- JSON Appender for Observability (ELK, Splunk, etc.) -->
+        <RollingFile name="JsonFile"
+                     fileName="${LOG_DIR}/${APP_NAME}-json.log"
+                     filePattern="${LOG_DIR}/${APP_NAME}-json-%d{yyyy-MM-dd}-%i.log.gz">
+            <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_DIR}" maxDepth="1">
+                    <IfFileName glob="${APP_NAME}-json-*.log.gz"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- Async Appender wrapping all appenders for better performance -->
+        <Async name="AsyncConsole">
+            <AppenderRef ref="Console"/>
+        </Async>
+        <Async name="AsyncRollingFile">
+            <AppenderRef ref="RollingFile"/>
+        </Async>
+        <Async name="AsyncErrorFile">
+            <AppenderRef ref="ErrorFile"/>
+        </Async>
+        <Async name="AsyncJsonFile">
+            <AppenderRef ref="JsonFile"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <!-- Application Logger -->
+        <Logger name="com.bbay.mindnote" level="DEBUG" additivity="false">
+            <AppenderRef ref="AsyncConsole"/>
+            <AppenderRef ref="AsyncRollingFile"/>
+            <AppenderRef ref="AsyncErrorFile"/>
+            <AppenderRef ref="AsyncJsonFile"/>
+        </Logger>
+
+        <!-- Spring Framework Logger -->
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="AsyncConsole"/>
+            <AppenderRef ref="AsyncRollingFile"/>
+        </Logger>
+
+        <!-- Hibernate Logger -->
+        <Logger name="org.hibernate" level="INFO" additivity="false">
+            <AppenderRef ref="AsyncConsole"/>
+            <AppenderRef ref="AsyncRollingFile"/>
+        </Logger>
+
+        <!-- Hibernate SQL Logger (set to DEBUG to see SQL queries) -->
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <AppenderRef ref="AsyncConsole"/>
+            <AppenderRef ref="AsyncRollingFile"/>
+        </Logger>
+
+        <!-- Hibernate SQL Parameters Logger -->
+        <Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+            <AppenderRef ref="AsyncConsole"/>
+            <AppenderRef ref="AsyncRollingFile"/>
+        </Logger>
+
+        <!-- Root Logger -->
+        <Root level="INFO">
+            <AppenderRef ref="AsyncConsole"/>
+            <AppenderRef ref="AsyncRollingFile"/>
+            <AppenderRef ref="AsyncErrorFile"/>
+            <AppenderRef ref="AsyncJsonFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
