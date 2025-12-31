@@ -141,17 +141,16 @@ Or download and extract the ZIP file.
 
 ### Step 3: Configure Application Properties
 
-The application uses `application.properties` for configuration.
+⚠️ **IMPORTANT:** The `application.properties` file is NOT included in the repository for security reasons.
 
-**For first-time setup:**
+**Create your configuration file:**
 
 ```bash
-# The application.properties already exists with default values
-# If you need custom configuration, copy from the example:
+# Copy from the example template
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
-**Edit `src/main/resources/application.properties`:**
+**Edit `src/main/resources/application.properties` with your database credentials:**
 
 ```properties
 # Database Configuration
@@ -161,6 +160,8 @@ spring.datasource.password=your_password_here
 
 # Keep other settings as default for local development
 ```
+
+⚠️ **Never commit** `application.properties` to version control - it's already in `.gitignore`
 
 **Important Configuration Options:**
 
