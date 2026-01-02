@@ -4,16 +4,13 @@ Production-ready REST API for a Note Application built with Spring Boot 4.0.1, J
 
 ## 📋 Table of Contents
 
-- [Technology Stack](#technology-stack)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation & Setup](#installation--setup)
-- [Configuration](#configuration)
-- [Running the Application](#running-the-application)
-- [Testing](#testing)
-- [API Documentation](#api-documentation)
-- [Logging](#logging)
-- [Troubleshooting](#troubleshooting)
+- [Technology Stack](#-technology-stack)
+- [Features](#-features)
+- [Prerequisites](#-prerequisites)
+- [Installation & Setup](#-installation--setup)
+- [Running the Application](#-running-the-application)
+- [Testing](#-testing)
+- [Troubleshooting](#-troubleshooting)
 
 ## 🛠 Technology Stack
 
@@ -27,74 +24,30 @@ Production-ready REST API for a Note Application built with Spring Boot 4.0.1, J
 
 ## ✨ Features
 
-- ✅ Full CRUD operations for Notes
-- ✅ Java 25 Records for DTOs (no Lombok)
-- ✅ Constructor Injection throughout
-- ✅ JPA Entity with lifecycle hooks (@PrePersist, @PreUpdate)
-- ✅ Bean Validation (@NotBlank)
-- ✅ Global Exception Handling (@RestControllerAdvice)
-- ✅ Production-grade Log4j2 configuration
-- ✅ Async Logging with rolling file policies
-- ✅ JSON logs for observability (ELK/Splunk)
-- ✅ Comprehensive unit tests with 100% service coverage
+- ✅ **Full CRUD operations** for Notes
+- ✅ **Categorization:** Organize notes into distinct Categories (Folders)
+- ✅ **Tagging System:** Add multiple dynamic Tags to notes (Many-to-Many)
+- ✅ **Advanced Search:** Filter notes by Category and/or Tags
+- ✅ **Pagination & Sorting:** Efficiently handle large datasets with server-side pagination
+- ✅ **Java 25 Records:** Immutable DTOs (no Lombok)
+- ✅ **JPA Entity Lifecycle:** Automated timestamps (@PrePersist, @PreUpdate)
+- ✅ **Bean Validation:** Strict input validation (@NotBlank)
+- ✅ **Global Exception Handling:** Standardized error responses (@RestControllerAdvice)
+- ✅ **Production Logging:** Async Log4j2 with JSON layout (ELK ready)
 
 ## 📦 Prerequisites
 
-Before you begin, ensure you have the following installed:
+- Java Development Kit (JDK) 25
+- PostgreSQL 15 or higher
+- Apache Maven 3.9+
+- Git (optional)
 
-### Required Software
-
-1. **Java Development Kit (JDK) 25**
-   - Download from: [Oracle JDK 25](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK 25](https://jdk.java.net/25/)
-   - Verify installation:
-     ```bash
-     java -version
-     # Should show: java version "25" or higher
-     ```
-
-2. **PostgreSQL 15 or higher**
-   - **Windows:** Download from [PostgreSQL Downloads](https://www.postgresql.org/download/windows/)
-   - **macOS:**
-     ```bash
-     brew install postgresql@15
-     brew services start postgresql@15
-     ```
-   - **Linux (Ubuntu/Debian):**
-     ```bash
-     sudo apt update
-     sudo apt install postgresql postgresql-contrib
-     sudo systemctl start postgresql
-     ```
-   - Verify installation:
-     ```bash
-     psql --version
-     # Should show: psql (PostgreSQL) 15.x or higher
-     ```
-
-3. **Apache Maven 3.9+**
-   - **Windows:** Download from [Maven Downloads](https://maven.apache.org/download.cgi)
-   - **macOS:**
-     ```bash
-     brew install maven
-     ```
-   - **Linux:**
-     ```bash
-     sudo apt update
-     sudo apt install maven
-     ```
-   - Verify installation:
-     ```bash
-     mvn -version
-     # Should show: Apache Maven 3.9.x or higher
-     ```
-
-4. **Git** (optional, for cloning)
-   - Download from: [Git Downloads](https://git-scm.com/downloads)
-
-### Optional Tools
-
-- **Postman** or **cURL** - For testing API endpoints
-- **IntelliJ IDEA** or **VS Code** - For development
+**Verify installations:**
+```bash
+java -version    # Should show version 25
+psql --version   # Should show PostgreSQL 15+
+mvn -version     # Should show Maven 3.9+
+```
 
 ## 🚀 Installation & Setup
 
@@ -104,8 +57,6 @@ Before you begin, ensure you have the following installed:
 git clone https://github.com/B-Baysal/mindNote.git
 cd mindNote
 ```
-
-Or download and extract the ZIP file.
 
 ### Step 2: Set Up PostgreSQL Database
 
@@ -132,26 +83,18 @@ Or download and extract the ZIP file.
    \q
    ```
 
-#### Option B: Using pgAdmin (GUI)
-
-1. Open pgAdmin
-2. Right-click on "Databases" → "Create" → "Database"
-3. Enter database name: `mindnote`
-4. Click "Save"
-
 ### Step 3: Configure Application Properties
 
-The application uses `application.properties` for configuration.
+⚠️ **IMPORTANT:** The `application.properties` file is NOT included in the repository for security reasons.
 
-**For first-time setup:**
+**Create your configuration file:**
 
 ```bash
-# The application.properties already exists with default values
-# If you need custom configuration, copy from the example:
+# Copy from the example template
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
-**Edit `src/main/resources/application.properties`:**
+**Edit `src/main/resources/application.properties` with your database credentials:**
 
 ```properties
 # Database Configuration
@@ -161,6 +104,8 @@ spring.datasource.password=your_password_here
 
 # Keep other settings as default for local development
 ```
+
+⚠️ **Never commit** `application.properties` to version control - it's already in `.gitignore`
 
 **Important Configuration Options:**
 
@@ -222,80 +167,6 @@ java -jar target/mindNote-0.0.1-SNAPSHOT.jar
    - Type "Spring Boot Dashboard"
    - Click the play button next to "mindNote"
 
-### Verify Application is Running
-
-The application will start on **http://localhost:8080**
-
-**Check health:**
-```bash
-curl http://localhost:8080/api/notes
-# Should return: []
-```
-
-**Successful startup logs:**
-```
-INFO  c.b.m.MindNoteApplication - Started MindNoteApplication in X.XXX seconds
-INFO  c.b.m.service.NoteService - NoteService initialized
-INFO  c.b.m.controller.NoteController - NoteController initialized
-```
-
-## ⚙️ Configuration
-
-### Database Configuration
-
-**Change Database Name:**
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/your_database_name
-```
-
-**Use Different PostgreSQL Port:**
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5433/mindnote
-```
-
-**Remote Database:**
-```properties
-spring.datasource.url=jdbc:postgresql://your-host.com:5432/mindnote
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-```
-
-### Application Port Configuration
-
-**Change default port (8080):**
-```properties
-server.port=9090
-```
-
-### Logging Configuration
-
-Logs are stored in the `logs/` directory:
-- `logs/mindnote.log` - All application logs
-- `logs/mindnote-error.log` - Error logs only
-- `logs/mindnote-json.log` - JSON format for log aggregation
-
-**Adjust log levels** in `src/main/resources/log4j2-spring.xml`:
-```xml
-<!-- Change from DEBUG to INFO for less verbose logs -->
-<Logger name="com.bbay.mindnote" level="INFO" additivity="false">
-```
-
-### Database Schema Auto-Creation
-
-The application automatically creates tables on startup.
-
-**To disable auto-creation:**
-```properties
-spring.jpa.hibernate.ddl-auto=none
-```
-
-Options:
-- `update` - Update schema (safe for development)
-- `create` - Drop and recreate (data loss!)
-- `create-drop` - Drop on shutdown
-- `validate` - Validate schema only
-- `none` - Disable
-
 ## 🧪 Testing
 
 ### Run All Tests
@@ -323,170 +194,6 @@ mvn clean test jacoco:report
 Tests run: 9, Failures: 0, Errors: 0, Skipped: 0
 ```
 
-## 📚 API Documentation
-
-Base URL: `http://localhost:8080`
-
-### Endpoints Overview
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/notes` | Get all notes | No |
-| GET | `/api/notes/{id}` | Get note by ID | No |
-| POST | `/api/notes` | Create a new note | No |
-| PUT | `/api/notes/{id}` | Update existing note | No |
-| DELETE | `/api/notes/{id}` | Delete note | No |
-
-### API Examples
-
-#### 1. Create a New Note
-
-**Request:**
-```bash
-curl -X POST http://localhost:8080/api/notes \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "My First Note",
-    "content": "This is the content of my note"
-  }'
-```
-
-**Response:** `201 Created`
-```json
-{
-  "id": 1,
-  "title": "My First Note",
-  "content": "This is the content of my note",
-  "createdAt": "2025-12-31T10:30:00",
-  "updatedAt": "2025-12-31T10:30:00"
-}
-```
-
-#### 2. Get All Notes
-
-**Request:**
-```bash
-curl http://localhost:8080/api/notes
-```
-
-**Response:** `200 OK`
-```json
-[
-  {
-    "id": 1,
-    "title": "My First Note",
-    "content": "This is the content of my note",
-    "createdAt": "2025-12-31T10:30:00",
-    "updatedAt": "2025-12-31T10:30:00"
-  },
-  {
-    "id": 2,
-    "title": "Another Note",
-    "content": "More content here",
-    "createdAt": "2025-12-31T11:00:00",
-    "updatedAt": "2025-12-31T11:00:00"
-  }
-]
-```
-
-#### 3. Get Note by ID
-
-**Request:**
-```bash
-curl http://localhost:8080/api/notes/1
-```
-
-**Response:** `200 OK`
-```json
-{
-  "id": 1,
-  "title": "My First Note",
-  "content": "This is the content of my note",
-  "createdAt": "2025-12-31T10:30:00",
-  "updatedAt": "2025-12-31T10:30:00"
-}
-```
-
-#### 4. Update Note
-
-**Request:**
-```bash
-curl -X PUT http://localhost:8080/api/notes/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Updated Title",
-    "content": "Updated content"
-  }'
-```
-
-**Response:** `200 OK`
-```json
-{
-  "id": 1,
-  "title": "Updated Title",
-  "content": "Updated content",
-  "createdAt": "2025-12-31T10:30:00",
-  "updatedAt": "2025-12-31T12:00:00"
-}
-```
-
-#### 5. Delete Note
-
-**Request:**
-```bash
-curl -X DELETE http://localhost:8080/api/notes/1
-```
-
-**Response:** `204 No Content`
-
-### Error Responses
-
-#### Validation Error (400)
-
-**Request with missing title:**
-```bash
-curl -X POST http://localhost:8080/api/notes \
-  -H "Content-Type: application/json" \
-  -d '{"content": "Content without title"}'
-```
-
-**Response:** `400 Bad Request`
-```json
-{
-  "status": 400,
-  "message": "Validation failed",
-  "timestamp": "2025-12-31T10:30:00",
-  "errors": {
-    "title": "Title is required"
-  }
-}
-```
-
-#### Resource Not Found (404)
-
-**Response:** `404 Not Found`
-```json
-{
-  "status": 404,
-  "message": "Note not found with id: 999",
-  "timestamp": "2025-12-31T10:30:00"
-}
-```
-
-### Testing with Postman
-
-1. Import the API collection:
-   - Create a new Collection in Postman
-   - Add requests for each endpoint above
-   - Set base URL as variable: `{{baseUrl}}` = `http://localhost:8080`
-
-2. Test sequence:
-   - POST → Create a note
-   - GET all → Verify note exists
-   - GET by ID → Retrieve specific note
-   - PUT → Update the note
-   - DELETE → Remove the note
-
 ## 📊 Logging
 
 The application uses **Log4j2** with production-grade configuration:
@@ -510,60 +217,6 @@ The application uses **Log4j2** with production-grade configuration:
 - Maximum 30 archived files
 - Automatic compression (`.gz`)
 - Files older than 30 days are auto-deleted
-
-### Viewing Logs
-
-**Real-time console logs:**
-```bash
-mvn spring-boot:run
-```
-
-**Tail log files:**
-```bash
-# All logs
-tail -f logs/mindnote.log
-
-# Errors only
-tail -f logs/mindnote-error.log
-```
-
-## 🗂 Project Structure
-
-```
-mindNote/
-├── src/
-│   ├── main/
-│   │   ├── java/com/bbay/mindnote/
-│   │   │   ├── MindNoteApplication.java          # Main Spring Boot application
-│   │   │   ├── controller/
-│   │   │   │   └── NoteController.java           # REST endpoints
-│   │   │   ├── service/
-│   │   │   │   └── NoteService.java              # Business logic
-│   │   │   ├── repository/
-│   │   │   │   └── NoteRepository.java           # JPA repository
-│   │   │   ├── entity/
-│   │   │   │   └── Note.java                     # JPA entity with lifecycle hooks
-│   │   │   ├── dto/
-│   │   │   │   ├── NoteRequest.java              # Request DTO (Record)
-│   │   │   │   └── NoteResponse.java             # Response DTO (Record)
-│   │   │   └── exception/
-│   │   │       ├── ResourceNotFoundException.java # Custom exception
-│   │   │       └── GlobalExceptionHandler.java   # @RestControllerAdvice
-│   │   └── resources/
-│   │       ├── application.properties            # Configuration
-│   │       ├── application.properties.example    # Configuration template
-│   │       └── log4j2-spring.xml                 # Log4j2 configuration
-│   └── test/
-│       └── java/com/bbay/mindnote/
-│           ├── MindNoteApplicationTests.java     # Context load test
-│           └── service/
-│               └── NoteServiceTest.java          # Service unit tests
-├── logs/                                         # Log files (gitignored)
-├── target/                                       # Build output (gitignored)
-├── .gitignore                                    # Git ignore rules
-├── pom.xml                                       # Maven dependencies
-└── README.md                                     # This file
-```
 
 ## 🔧 Troubleshooting
 

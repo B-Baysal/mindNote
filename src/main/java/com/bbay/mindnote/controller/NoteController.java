@@ -9,8 +9,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -26,10 +29,16 @@ public class NoteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NoteResponse>> getAllNotes() {
-        logger.info("GET /api/notes - Received request to fetch all notes");
-        List<NoteResponse> notes = noteService.getAllNotes();
-        logger.info("GET /api/notes - Successfully returned {} notes", notes.size());
+    public ResponseEntity<Page<NoteResponse>> getAllNotes(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String tag,
+            @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        logger.info("GET /api/notes - Request params: cat={}, tag={}, page={}", category, tag, pageable.getPageNumber());
+
+        Page<NoteResponse> notes = noteService.getAllNotes(category, tag, pageable);
+
+        logger.info("GET /api/notes - Returned {} notes", notes.getNumberOfElements());
         return ResponseEntity.ok(notes);
     }
 
