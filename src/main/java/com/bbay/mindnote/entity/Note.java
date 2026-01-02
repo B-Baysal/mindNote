@@ -2,6 +2,8 @@ package com.bbay.mindnote.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "notes")
@@ -17,6 +19,24 @@ public class Note {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    // --- New Relationships ---
+
+    // 1. Category: Many Notes -> One Category
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    // 2. Tags: Many Notes <-> Many Tags
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "note_tags",
+            joinColumns = @JoinColumn(name = "note_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+
+    // -------------------------
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -26,6 +46,7 @@ public class Note {
     public Note() {
     }
 
+    // Kept for backward compatibility, though setters are preferred for complex entities
     public Note(Long id, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
@@ -44,6 +65,20 @@ public class Note {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // --- Helper Methods for Tags ---
+
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.getNotes().add(this); // Maintain bi-directional consistency
+    }
+
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.getNotes().remove(this);
+    }
+
+    // --- Getters and Setters ---
 
     public Long getId() {
         return id;
@@ -67,6 +102,22 @@ public class Note {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 
     public LocalDateTime getCreatedAt() {
